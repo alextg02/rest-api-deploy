@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset='utf-8'>
+    <title>Probar API Rest</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        article {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        article img {
+            height: auto;
+            width: 320px;
+            max-width: 100%;
+        }
+        p {
+            margin-bottom: 10px;
+            font-size: 18px;
+            line-height: 1.5;
+            text-align: justify;
+            word-wrap: break-word;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            overflow-wrap: break-word;
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease-in-out;
+            &:hover {
+                color: #007bff;
+            }
+        }
+
+    </style>
+
+    <script type="module">
+        fetch('http://localhost:1234/movies')
+        .then(response => response.json())
+        .then(movies=>{
+          const html = movies.map(movie => {
+            return `
+            <article data-id="${movie.id}">
+                <h2>${movie.title}</h2>
+                <p>${movie.year}</p>
+                <img src="${movie.poster}" alt="${movie.title}">
+                <a href="${movie.trailer}">Ver trailer</a>
+                <button>Eliminar</button>
+            </article>
+            `
+          }).join('')
+          document.querySelector('main').innerHTML = html
+
+          document.addEventListener('click', e => {
+            if(e.target.matches('button')){
+                const article = e.target.closest('article');
+                const movieId = article.dataset.id
+                fetch(`http://localhost:1234/movies/${movieId}`, {method: 'DELETE'})
+                .then(res =>{
+                    if(res.ok){
+                        article.remove();
+                    }
+                })
+            }
+          })
+        })
+    </script>
+</head>
+<body>
+    <main>
+
+    </main>
+</body>
+</html>
